@@ -1,15 +1,6 @@
 var get_multiplier = function () {
     return parseFloat(localStorage.multiplier || '1');
 },
-load_options = function () {
-    $('#save').on('click', save_options);
-    $('#multiplier').val(get_multiplier());
-},
-save_options = function () {
-    var multiplier = $('#multiplier').val();
-    localStorage.multiplier = multiplier || '1';
-    reload_badge();
-},
 reload_badge = function () {
     chrome.browserAction.setBadgeText({
         'text': '...'
@@ -26,4 +17,13 @@ reload_badge = function () {
             'text': value.toFixed(2)
         });
     });
+},
+save_options = function () {
+    var multiplier = $('#multiplier').val();
+    localStorage.multiplier = multiplier || '1';
+    reload_badge();
+},
+load_options = function () {
+    $('#save').on('click', save_options);
+    $('#multiplier').val(get_multiplier());
 };
