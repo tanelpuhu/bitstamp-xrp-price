@@ -2,7 +2,6 @@ var get_multiplier = function() {
         return parseFloat(localStorage.multiplier || '1');
     },
     load_options = function(){
-        console.log('setBadgeText')
         $('#save').on('click', save_options);
         $('#multiplier').val(get_multiplier());
     },
@@ -12,9 +11,6 @@ var get_multiplier = function() {
         reload_badge();
     },
     reload_badge = function () {
-        chrome.browserAction.setBadgeText({
-            'text': '...'
-        });
         $.getJSON("https://www.bitstamp.net/api/ticker/", function (data) {
             if (!data && !data.last) {
                 return;
@@ -24,9 +20,20 @@ var get_multiplier = function() {
                 color: [0, 0, 0, 255]
             });
             chrome.browserAction.setBadgeText({
-                'text': value.toFixed(2)
+                'text': value.toFixed(1)
             });
         });
+    },
+    background = function() {
+        chrome.browserAction.onClicked.addListener(function (tab) {
+            chrome.browserAction.setBadgeBackgroundColor({
+                color: [255, 0, 0, 255]
+            });
+            chrome.browserAction.setBadgeText({
+                'text': '...'
+            });
+            reload_badge();
+        });
+        setInterval(reload_badge, 60000);
+        reload_badge();
     };
-
-
