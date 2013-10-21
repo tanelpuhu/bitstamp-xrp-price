@@ -6,12 +6,16 @@ reload_badge = function () {
         if (!data && !data.last) {
             return;
         }
-        var value = parseFloat(data.last) * get_multiplier();
+        var value = parseFloat(data.last),
+            badge_value = value * get_multiplier();
         chrome.browserAction.setBadgeBackgroundColor({
             color: [0, 0, 0, 255]
         });
+        chrome.browserAction.setTitle({
+            'title': '1 BTC = ' + value.toFixed(2) + ' USD'
+        });
         chrome.browserAction.setBadgeText({
-            'text': value.toFixed(1)
+            'text': badge_value.toFixed(1)
         });
     });
 },
