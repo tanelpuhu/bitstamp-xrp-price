@@ -1,22 +1,41 @@
 var get_multiplier = function () {
     return parseFloat(localStorage.multiplier || '1');
 },
+get_last_value = function() {
+    return store.get('last-value');
+},
+set_last_value = function(value) {
+    store.set('last-value', value);
+},
 reload_badge = function () {
     $.getJSON("https://www.bitstamp.net/api/ticker/", function (data) {
         if (!data && !data.last) {
             return;
         }
         var value = parseFloat(data.last),
+            last_value = get_last_value() || value,
             badge_value = value * get_multiplier();
-        chrome.browserAction.setBadgeBackgroundColor({
-            color: [0, 0, 0, 255]
-        });
+        if(value == last_value) {
+            chrome.browserAction.setBadgeBackgroundColor({
+                color: [0, 0, 0, 150]
+            });
+        } else if(value > last_value) {
+            chrome.browserAction.setBadgeBackgroundColor({
+                color: [0, 255, 127, 255]
+            });
+        } else {
+            chrome.browserAction.setBadgeBackgroundColor({
+                color: [255, 0, 0, 255]
+            });
+        }
+
         chrome.browserAction.setTitle({
             'title': '1 BTC = ' + value.toFixed(2) + ' USD'
         });
         chrome.browserAction.setBadgeText({
             'text': badge_value.toFixed(1)
         });
+        set_last_value(value);
     });
 },
 save_options = function () {
