@@ -21,7 +21,7 @@ reload_badge = function () {
             });
         } else if(value > last_value) {
             chrome.browserAction.setBadgeBackgroundColor({
-                color: [0, 255, 127, 255]
+                color: [0, 150, 0, 150]
             });
         } else {
             chrome.browserAction.setBadgeBackgroundColor({
