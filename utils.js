@@ -1,5 +1,5 @@
 var get_multiplier = function () {
-    return parseFloat(localStorage.multiplier || '1');
+    return parseFloat(store.get('multiplier') || '1');
 },
 get_last_value = function() {
     return store.get('last-value');
@@ -40,7 +40,7 @@ reload_badge = function () {
 },
 save_options = function () {
     var multiplier = $('#multiplier').val();
-    localStorage.multiplier = multiplier || '1';
+    store.set('multiplier', multiplier || '1');
     reload_badge();
 },
 load_options = function () {
