@@ -6,12 +6,33 @@
     <script type="text/javascript" src="store.min.js"></script>
     <script type="text/javascript" src="utils.js"></script>
     <script type="text/javascript" src="options.js"></script>
+    <style type="text/css">
+      table td {
+        padding: 5px;
+      }
+    </style>
   </head>
   <body>
     <h1>Bitstamp BTC price</h1>
-    <p>
-      Multiplier: <input id="multiplier" type="number">
-      <button id="save">Save</button>
-    </p>
+    <table border=0>
+      <tr>
+        <td>Multiplier:
+        <td><input id="multiplier" type="number">
+      </tr>
+      <tr>
+        <td>Price precision:
+        <td>
+          <select id="precision">
+            <option value="0">0</option>
+            <option value="1">0.0</option>
+            <option value="2">0.00</option>
+            <option value="3">0.000</option>
+          </select>
+      </tr>
+      <tr>
+        <td>
+        <td><button id="save">Save</button>
+      </tr>
+    </table>
   </body>
 </html>

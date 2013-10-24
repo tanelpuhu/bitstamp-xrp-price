@@ -1,11 +1,36 @@
 var get_multiplier = function () {
-    return parseFloat(store.get('multiplier') || '1');
+    var value = store.get('multiplier');
+    if (value === undefined) {
+        return 1;
+    }
+    return value;
 },
-get_last_value = function() {
+set_multiplier = function (value) {
+    value = parseFloat(value);
+    if (isNaN(value)) {
+        value = 1;
+    }
+    store.set('multiplier', value);
+},
+get_last_value = function () {
     return store.get('last-value');
 },
-set_last_value = function(value) {
+set_last_value = function (value) {
     store.set('last-value', value);
+},
+get_precision = function () {
+    var value = store.get('precision');
+    if (value === undefined) {
+        return 1;
+    }
+    return value;
+},
+set_precision = function (value) {
+    value = parseInt(value, 10);
+    if (isNaN(value)) {
+        value = 1;
+    }
+    store.set('precision', value);
 },
 reload_badge = function () {
     $.getJSON("https://www.bitstamp.net/api/ticker/", function (data) {
@@ -15,11 +40,11 @@ reload_badge = function () {
         var value = parseFloat(data.last),
             last_value = get_last_value() || value,
             badge_value = value * get_multiplier();
-        if(value == last_value) {
+        if (value == last_value) {
             chrome.browserAction.setBadgeBackgroundColor({
                 color: [0, 0, 0, 150]
             });
-        } else if(value > last_value) {
+        } else if (value > last_value) {
             chrome.browserAction.setBadgeBackgroundColor({
                 color: [0, 150, 0, 150]
             });
@@ -28,24 +53,26 @@ reload_badge = function () {
                 color: [255, 0, 0, 255]
             });
         }
-
         chrome.browserAction.setTitle({
             'title': '1 BTC = ' + value.toFixed(2) + ' USD'
         });
         chrome.browserAction.setBadgeText({
-            'text': badge_value.toFixed(1)
+            'text': badge_value.toFixed(get_precision())
         });
         set_last_value(value);
     });
 },
 save_options = function () {
-    var multiplier = $('#multiplier').val();
-    store.set('multiplier', multiplier || '1');
+    var multiplier = $('#multiplier').val(),
+        precision = $('#precision option:selected').val();
+    set_multiplier(multiplier);
+    set_precision(precision);
     reload_badge();
 },
 load_options = function () {
-    $('#save').on('click', save_options);
     $('#multiplier').val(get_multiplier());
+    $('#precision option[value=' + get_precision() + ']').prop('selected', true);
+    $('#save').on('click', save_options);
 },
 background = function () {
     chrome.browserAction.onClicked.addListener(function (tab) {
