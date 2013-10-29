@@ -10,17 +10,21 @@
       table td {
         padding: 5px;
       }
+      td.opt {
+        vertical-align: top;
+        text-align: right;
+      }
     </style>
   </head>
   <body>
     <h1>Bitstamp BTC price</h1>
     <table border=0>
       <tr>
-        <td>Multiplier:
+        <td class="opt">Multiplier:
         <td><input id="multiplier" type="number">
       </tr>
       <tr>
-        <td>Price precision:
+        <td class="opt">Price precision:
         <td>
           <select id="precision">
             <option value="0">0</option>
@@ -28,6 +32,13 @@
             <option value="2">0.00</option>
             <option value="3">0.000</option>
           </select>
+      </tr>
+      <tr>
+        <td class="opt">Notify of:
+        <td>
+          <label><input type="checkbox" id="notification-max">new maximum value</label>
+          <br>
+          <label><input type="checkbox" id="notification-minx">new minimum value</label>
       </tr>
       <tr>
         <td>

@@ -1,4 +1,12 @@
-var get_multiplier = function () {
+var notify = function(title, msg) {
+    return chrome.notifications.create('', {
+      type: "basic",
+      title: title,
+      message: msg,
+      iconUrl: "icon.png"
+    }, function(notifid){});
+},
+get_multiplier = function () {
     var value = store.get('multiplier');
     if (value === undefined) {
         return 1;
@@ -39,6 +47,8 @@ reload_badge = function () {
         }
         var value = parseFloat(data.last),
             last_value = get_last_value() || value,
+            last_max = store.get('last_max') || value,
+            last_min = store.get('last_min') || value,
             badge_value = value * get_multiplier();
         if (value == last_value) {
             chrome.browserAction.setBadgeBackgroundColor({
@@ -60,6 +70,18 @@ reload_badge = function () {
             'text': badge_value.toFixed(get_precision())
         });
         set_last_value(value);
+        if(value > last_max) {
+            store.set('last_max', value);
+            if(store.get('notification-max')) {
+                notify('New maximum BTC price', 'The highest price is now ' + value);
+            }
+        }
+        if(value < last_min) {
+            store.set('last_min', value);
+            if(store.get('notification-min')) {
+                notify('New minimum BTC price', 'The lowest price is now ' + value);
+            }
+        }
     });
 },
 save_options = function () {
@@ -67,11 +89,23 @@ save_options = function () {
         precision = $('#precision option:selected').val();
     set_multiplier(multiplier);
     set_precision(precision);
+    $('input[type=checkbox]').each(function() {
+        var elem = $(this),
+            id = elem.attr('id'),
+            checked = elem.prop('checked');
+        store.set(id, checked);
+    });
     reload_badge();
 },
 load_options = function () {
     $('#multiplier').val(get_multiplier());
     $('#precision option[value=' + get_precision() + ']').prop('selected', true);
+    $('input[type=checkbox]').each(function() {
+        var elem = $(this),
+            id = elem.attr('id'),
+            checked = store.get(id);
+        elem.prop('checked', checked);
+    });
     $('#save').on('click', save_options);
 },
 background = function () {
