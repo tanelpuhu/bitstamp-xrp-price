@@ -1,10 +1,10 @@
-var notify = function(title, msg) {
+var notify = function (title, msg) {
     return chrome.notifications.create('', {
-      type: "basic",
-      title: title,
-      message: msg,
-      iconUrl: "icon.png"
-    }, function(notifid){});
+        type: "basic",
+        title: title,
+        message: msg,
+        iconUrl: "icon.png"
+    }, function (notifid) {});
 },
 get_multiplier = function () {
     var value = store.get('multiplier');
@@ -70,15 +70,15 @@ reload_badge = function () {
             'text': badge_value.toFixed(get_precision())
         });
         set_last_value(value);
-        if(value > last_max) {
+        if (value > last_max) {
             store.set('last_max', value);
-            if(store.get('notification-max')) {
+            if (store.get('notification-max')) {
                 notify('New maximum BTC price', 'The highest price is now ' + value);
             }
         }
-        if(value < last_min) {
+        if (value < last_min) {
             store.set('last_min', value);
-            if(store.get('notification-min')) {
+            if (store.get('notification-min')) {
                 notify('New minimum BTC price', 'The lowest price is now ' + value);
             }
         }
@@ -89,7 +89,7 @@ save_options = function () {
         precision = $('#precision option:selected').val();
     set_multiplier(multiplier);
     set_precision(precision);
-    $('input[type=checkbox]').each(function() {
+    $('input[type=checkbox]').each(function () {
         var elem = $(this),
             id = elem.attr('id'),
             checked = elem.prop('checked');
@@ -100,7 +100,7 @@ save_options = function () {
 load_options = function () {
     $('#multiplier').val(get_multiplier());
     $('#precision option[value=' + get_precision() + ']').prop('selected', true);
-    $('input[type=checkbox]').each(function() {
+    $('input[type=checkbox]').each(function () {
         var elem = $(this),
             id = elem.attr('id'),
             checked = store.get(id);
