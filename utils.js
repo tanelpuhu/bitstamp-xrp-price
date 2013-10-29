@@ -40,15 +40,15 @@ set_precision = function (value) {
     }
     store.set('precision', value);
 },
-reload_badge = function () {
+reload_badge = function (manual) {
     $.getJSON("https://www.bitstamp.net/api/ticker/", function (data) {
         if (!data && !data.last) {
             return;
         }
         var value = parseFloat(data.last),
             last_value = get_last_value() || value,
-            last_max = store.get('last_max') || value,
-            last_min = store.get('last_min') || value,
+            last_max = store.get('last-max') || value,
+            last_min = store.get('last-min') || value,
             badge_value = value * get_multiplier();
         if (value == last_value) {
             chrome.browserAction.setBadgeBackgroundColor({
@@ -70,17 +70,15 @@ reload_badge = function () {
             'text': badge_value.toFixed(get_precision())
         });
         set_last_value(value);
-        if (value > last_max) {
-            store.set('last_max', value);
-            if (store.get('notification-max')) {
-                notify('New maximum BTC price', 'The highest price is now ' + value);
-            }
+        if (store.get('notification-max') && value > last_max) {
+            store.set('last-max', value);
+            notify('New maximum BTC price', 'The highest price is now ' + value);
+            $('#last_max').val(value);
         }
-        if (value < last_min) {
-            store.set('last_min', value);
-            if (store.get('notification-min')) {
-                notify('New minimum BTC price', 'The lowest price is now ' + value);
-            }
+        if (store.get('notification-min') && value < last_min) {
+            store.set('last-min', value);
+            notify('New minimum BTC price', 'The lowest price is now ' + value);
+            $('#last_min').val(value);
         }
     });
 },
@@ -95,7 +93,9 @@ save_options = function () {
             checked = elem.prop('checked');
         store.set(id, checked);
     });
-    reload_badge();
+    store.set('last-max', parseFloat($('#last_max').val()) || get_last_value());
+    store.set('last-min', parseFloat($('#last_min').val()) || get_last_value());
+    reload_badge(1);
 },
 load_options = function () {
     $('#multiplier').val(get_multiplier());
@@ -106,6 +106,8 @@ load_options = function () {
             checked = store.get(id);
         elem.prop('checked', checked);
     });
+    $('#last_max').val(store.get('last-max') || get_last_value());
+    $('#last_min').val(store.get('last-min') || get_last_value());
     $('#save').on('click', save_options);
 },
 background = function () {
@@ -116,7 +118,7 @@ background = function () {
         chrome.browserAction.setBadgeText({
             'text': '...'
         });
-        reload_badge();
+        reload_badge(1);
     });
     setInterval(reload_badge, 60000);
     reload_badge();
