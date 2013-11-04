@@ -90,6 +90,7 @@ reload_badge = function (manual) {
                 min = Math.min.apply(Math, last_values),
                 abs = Math.round(Math.abs(max - min) * 100) / 100;
             if (abs > store.get('last-diff')) {
+                last_values = [value];
                 notify(
                     'Price change more than ' + store.get('last-diff'),
                     'Within 10 fetches price has changed ' + abs + ' USD. Current price is: ' + value);
