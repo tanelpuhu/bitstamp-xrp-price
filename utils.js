@@ -88,12 +88,17 @@ reload_badge = function (manual) {
             }
             var max = Math.max.apply(Math, last_values),
                 min = Math.min.apply(Math, last_values),
-                abs = Math.round(Math.abs(max - min) * 100) / 100;
-            if (abs > store.get('last-diff')) {
+                abs = Math.round(Math.abs(max - min) * 100) / 100,
+                last_diff = store.get('last-diff'),
+                title;
+            if (abs > last_diff) {
+                if(max == value) {
+                    title = 'Price rose from ' + min + ' to ' + max;
+                } else {
+                    title = 'Price fell from ' + max + ' to ' + min;
+                }
                 last_values = [value];
-                notify(
-                    'Price change more than ' + store.get('last-diff'),
-                    'Within 10 fetches price has changed ' + abs + ' USD. Current price is: ' + value);
+                notify(title, 'Within 10 fetches price changed ' + abs + ' USD.');
             }
         }
 
