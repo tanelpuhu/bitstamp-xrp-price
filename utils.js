@@ -1,9 +1,12 @@
 var last_values = [],
 notify = function (title, msg) {
+    var date = new Date(),
+        date_str =  date.getHours() + ':' + date.getMinutes() + ' ' + date.getDate() + '.' + date.getMonth() + '.' + date.getFullYear();
     return chrome.notifications.create('', {
         type: "basic",
         title: title,
         message: msg,
+        contextMessage: date_str,
         iconUrl: "icon.png"
     }, function (notifid) {});
 },
@@ -92,7 +95,7 @@ reload_badge = function (manual) {
                 last_diff = store.get('last-diff'),
                 title;
             if (abs > last_diff) {
-                if(max == value) {
+                if (max == value) {
                     title = 'Price rose from ' + min + ' to ' + max;
                 } else {
                     title = 'Price fell from ' + max + ' to ' + min;
