@@ -1,7 +1,24 @@
 var last_values = [],
 notify = function (title, msg) {
     var date = new Date(),
-        date_str =  date.getHours() + ':' + date.getMinutes() + ' ' + date.getDate() + '.' + date.getMonth() + '.' + date.getFullYear();
+        hour = date.getHours(),
+        minute = date.getMinutes(),
+        day = date.getDate(),
+        month = date.getMonth(),
+        year = date.getFullYear();
+    if (minute < 10) {
+        minute = '0' + minute;
+    }
+    if (hour < 10) {
+        hour = '0' + hour;
+    }
+    if (day < 10) {
+        day = '0' + day;
+    }
+    if (month < 10) {
+        month = '0' + month;
+    }
+    date_str = hour + ':' + minute + ' ' + day + '.' + month + '.' + year;
     return chrome.notifications.create('', {
         type: "basic",
         title: title,
