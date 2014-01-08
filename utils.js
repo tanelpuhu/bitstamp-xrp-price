@@ -4,7 +4,7 @@ notify = function (title, msg) {
         hour = date.getHours(),
         minute = date.getMinutes(),
         day = date.getDate(),
-        month = date.getMonth(),
+        month = date.getMonth() + 1,
         year = date.getFullYear();
     if (minute < 10) {
         minute = '0' + minute;
