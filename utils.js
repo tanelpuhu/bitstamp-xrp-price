@@ -18,7 +18,7 @@ notify = function (title, msg) {
     if (month < 10) {
         month = '0' + month;
     }
-    date_str = hour + ':' + minute + ' ' + day + '.' + month + '.' + year;
+    var date_str = hour + ':' + minute + ' ' + day + '.' + month + '.' + year;
     return chrome.notifications.create('', {
         type: "basic",
         title: title,
