@@ -71,7 +71,7 @@ reload_badge = function (manual) {
             last_max = store.get('last-max') || value,
             last_min = store.get('last-min') || value,
             badge_value = value * get_multiplier();
-        if (value == last_value) {
+        if (value === last_value) {
             chrome.browserAction.setBadgeBackgroundColor({
                 color: [0, 0, 0, 150]
             });
@@ -112,7 +112,7 @@ reload_badge = function (manual) {
                 last_diff = store.get('last-diff'),
                 title;
             if (abs > last_diff) {
-                if (max == value) {
+                if (max === value) {
                     title = 'Price rose from ' + min + ' to ' + max;
                 } else {
                     title = 'Price fell from ' + max + ' to ' + min;
