@@ -40,7 +40,17 @@
           <br>
           <label><input type="checkbox" id="notification-min">value</label> falls below <input id="last_min" size=5> and keeps falling
           <br>
-          <label><input type="checkbox" id="notification-diff">value changes at least</label><input id="last_diff" size=5> within 10 fetches
+          <label><input type="checkbox" id="notification-diff">value changes at
+          least</label><input id="last_diff" size=5> within
+          <select id='within'>
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+            <option value="30">30</option>
+            <option value="45">45</option>
+            <option value="60">60</option>
+          </select> fetches/minutes
       </tr>
       <tr>
         <td>

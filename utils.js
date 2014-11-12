@@ -1,4 +1,6 @@
 var last_values = [],
+    refresh_interval = 60000,
+    set_interval_id = 0,
 notify = function (title, msg) {
     var date = new Date(),
         hour = date.getHours(),
@@ -34,18 +36,8 @@ get_multiplier = function () {
     }
     return value;
 },
-set_multiplier = function (value) {
-    value = parseFloat(value);
-    if (isNaN(value)) {
-        value = 1;
-    }
-    store.set('multiplier', value);
-},
 get_last_value = function () {
     return store.get('last-value');
-},
-set_last_value = function (value) {
-    store.set('last-value', value);
 },
 get_precision = function () {
     var value = store.get('precision');
@@ -54,14 +46,28 @@ get_precision = function () {
     }
     return value;
 },
-set_precision = function (value) {
+get_within = function () {
+    return store.get('within') ||  10;
+},
+store_float = function (name, value, default_value) {
+    value = parseFloat(value);
+    if (isNaN(value)) {
+        value = default_value;
+    }
+    store.set(name, value);
+},
+store_int = function (name, value) {
     value = parseInt(value, 10);
     if (isNaN(value)) {
         value = 1;
     }
-    store.set('precision', value);
+    store.set(name, value);
 },
 reload_badge = function (manual) {
+    if (manual && set_interval_id) {
+        clearInterval(set_interval_id);
+        set_interval_id = setInterval(reload_badge, refresh_interval);
+    }
     $.getJSON("https://www.bitstamp.net/api/ticker/", function (data) {
         if (!data && !data.last) {
             return;
@@ -90,7 +96,7 @@ reload_badge = function (manual) {
         chrome.browserAction.setBadgeText({
             'text': badge_value.toFixed(get_precision())
         });
-        set_last_value(value);
+        store_float('last-value', value);
         if (store.get('notification-max') && value > last_max) {
             store.set('last-max', value);
             notify('New maximum BTC price', 'The highest price is now ' + value);
@@ -102,8 +108,9 @@ reload_badge = function (manual) {
             $('#last_min').val(value);
         }
         if (store.get('notification-diff') && store.get('last-diff')) {
+            var within = get_within();
             last_values.push(value);
-            if (last_values.length > 10) {
+            if (last_values.length > within) {
                 last_values.shift();
             }
             var max = Math.max.apply(Math, last_values),
@@ -114,36 +121,43 @@ reload_badge = function (manual) {
             if (abs > last_diff) {
                 if (max === value) {
                     title = 'Price rose from ' + min + ' to ' + max;
+                    abs = '+' + abs;
                 } else {
                     title = 'Price fell from ' + max + ' to ' + min;
+                    abs = '-' + abs;
                 }
                 last_values = [value];
-                notify(title, 'Within 10 fetches price changed ' + abs + ' USD.');
+                notify(title, 'Within ' + within + ' fetches/minutes price changed ' + abs + ' USD.');
             }
         }
-
     });
 },
 save_options = function () {
     var multiplier = $('#multiplier').val(),
-        precision = $('#precision option:selected').val();
-    set_multiplier(multiplier);
-    set_precision(precision);
+        precision = $('#precision option:selected').val(),
+        within = $('#within option:selected').val(),
+        last_max = $('#last_max').val(),
+        last_min = $('#last_min').val(),
+        last_diff = $('#last_diff').val();
+    store_float('multiplier', multiplier, 1);
+    store_int('precision', precision, 1);
+    store_int('within', within, 10);
+    store_float('last-max', last_max, get_last_value());
+    store_float('last-min', last_min, get_last_value());
+    store_float('last-diff', last_diff, 5);
     $('input[type=checkbox]').each(function () {
         var elem = $(this),
             id = elem.attr('id'),
             checked = elem.prop('checked');
         store.set(id, checked);
     });
-    store.set('last-max', parseFloat($('#last_max').val()) || get_last_value());
-    store.set('last-min', parseFloat($('#last_min').val()) || get_last_value());
-    store.set('last-diff', parseFloat($('#last_diff').val()) || 5);
-
+    load_options();
     reload_badge(1);
 },
 load_options = function () {
     $('#multiplier').val(get_multiplier());
     $('#precision option[value=' + get_precision() + ']').prop('selected', true);
+    $('#within option[value=' + get_within() + ']').prop('selected', true);
     $('input[type=checkbox]').each(function () {
         var elem = $(this),
             id = elem.attr('id'),
@@ -165,6 +179,6 @@ background = function () {
         });
         reload_badge(1);
     });
-    setInterval(reload_badge, 60000);
+    set_interval_id = setInterval(reload_badge, refresh_interval);
     reload_badge();
 };
