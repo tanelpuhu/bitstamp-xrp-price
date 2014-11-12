@@ -47,7 +47,7 @@ get_precision = function () {
     return value;
 },
 get_within = function () {
-    return store.get('within') ||  10;
+    return store.get('within') || 10;
 },
 store_float = function (name, value, default_value) {
     value = parseFloat(value);
