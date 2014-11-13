@@ -182,3 +182,9 @@ background = function () {
     set_interval_id = setInterval(reload_badge, refresh_interval);
     reload_badge();
 };
+
+$(document).ready(function() {
+  $.ajaxSetup({
+    cache: false
+  });
+});
