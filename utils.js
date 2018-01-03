@@ -68,7 +68,7 @@ reload_badge = function (manual) {
         clearInterval(set_interval_id);
         set_interval_id = setInterval(reload_badge, refresh_interval);
     }
-    $.getJSON("https://www.bitstamp.net/api/ticker/", function (data) {
+    $.getJSON("https://www.bitstamp.net/api/v2/ticker/xrpusd", function (data) {
         if (!data && !data.last) {
             return;
         }
@@ -91,7 +91,7 @@ reload_badge = function (manual) {
             });
         }
         chrome.browserAction.setTitle({
-            'title': '1 BTC = ' + value.toFixed(2) + ' USD'
+            'title': '1 XRP = ' + value.toFixed(2) + ' USD'
         });
         chrome.browserAction.setBadgeText({
             'text': badge_value.toFixed(get_precision())
@@ -99,12 +99,12 @@ reload_badge = function (manual) {
         store_float('last-value', value);
         if (store.get('notification-max') && value > last_max) {
             store.set('last-max', value);
-            notify('New maximum BTC price', 'The highest price is now ' + value);
+            notify('New maximum XRP price', 'The highest price is now ' + value);
             $('#last_max').val(value);
         }
         if (store.get('notification-min') && value < last_min) {
             store.set('last-min', value);
-            notify('New minimum BTC price', 'The lowest price is now ' + value);
+            notify('New minimum XRP price', 'The lowest price is now ' + value);
             $('#last_min').val(value);
         }
         if (store.get('notification-diff') && store.get('last-diff')) {
