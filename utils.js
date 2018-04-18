@@ -91,7 +91,7 @@ reload_badge = function (manual) {
             });
         }
         chrome.browserAction.setTitle({
-            'title': '1 XRP = ' + value.toFixed(2) + ' USD'
+            'title': '1 XRP = ' + value.toFixed(5) + ' USD'
         });
         chrome.browserAction.setBadgeText({
             'text': badge_value.toFixed(get_precision())
