@@ -16,5 +16,5 @@
    "options_page": "options.html",
    "name": "Bitstamp XRP price",
    "permissions": [ "notifications", "https://www.bitstamp.net/" ],
-   "version": "0.0.4"
+   "version": "0.2.0"
 }
